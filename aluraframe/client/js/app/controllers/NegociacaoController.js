@@ -6,6 +6,7 @@ class NegociacaoController {
 		this.inputValor = $("#valor");
 
 		this._listaNegociacoes = new ListaNegociacoes();
+		this._negociacoesView = new NegociacoesView($("#negociacoes-view"));
 	}
 
 	_criarNegociacao() {
@@ -33,7 +34,7 @@ class NegociacaoController {
 
 		this._listaNegociacoes.adiciona(negociacao);
 
-		console.log(this._listaNegociacoes.negociacoes);
+		this._negociacoesView.update(this._listaNegociacoes);
 
 		this._limparFormulario();
 	}
