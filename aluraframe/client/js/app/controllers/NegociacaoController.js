@@ -7,6 +7,15 @@ class NegociacaoController {
 
 		this._listaNegociacoes = new ListaNegociacoes();
 		this._negociacoesView = new NegociacoesView($("#negociacoes-view"));
+		this._negociacoesView.update(this._listaNegociacoes);
+	}
+
+	adiciona(event){
+		event.preventDefault();
+		let negociacao = this._criarNegociacao()
+		this._listaNegociacoes.adiciona(negociacao);
+		this._negociacoesView.update(this._listaNegociacoes);
+		this._limparFormulario();
 	}
 
 	_criarNegociacao() {
@@ -25,17 +34,5 @@ class NegociacaoController {
 		this.inputValor.value = 0.0;
 
 		this.inputData.focus();
-	}
-
-	adiciona(event){
-		event.preventDefault();
-
-		let negociacao = this._criarNegociacao()
-
-		this._listaNegociacoes.adiciona(negociacao);
-
-		this._negociacoesView.update(this._listaNegociacoes);
-
-		this._limparFormulario();
 	}
 }
