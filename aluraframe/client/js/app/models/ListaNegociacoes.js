@@ -7,7 +7,7 @@ class ListaNegociacoes {
 		this._negociacoes.push(negociacao);
 	}
 
-	apaga() {
+	esvazia() {
 		this._negociacoes = [];
 	}
 
