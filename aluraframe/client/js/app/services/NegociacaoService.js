@@ -1,23 +1,52 @@
 class NegociacaoService {
 
-	obterNegociacoesDaSemana(cb) {
+	constructor() {
+		this._httpService = new HttpService();
+	}
 
-		let xhr = new XMLHttpRequest();
-		xhr.open('GET', 'negociacoes/semana', true);
+	obterNegociacoes() {
+		return Promise.all([
+			this.obterNegociacoesDaSemana(),
+			this.obterNegociacoesDaSemanaAnterior(),
+			this.obterNegociacoesDaSemanaRetrasada()]
+		).then( periodos => {
+			let negociacoes = periodos.reduce((arrayAchatado, arr) => arrayAchatado.concat(arr), []);
+			return negociacoes;
+		}).catch( erro => {
+			throw new Error(erro);
+		});
+	}
 
-		xhr.onreadystatechange = () => {
-			if (xhr.readyState == XMLHttpRequest.DONE) {
-				if (xhr.status == 200) { 
-					cb(null, JSON.parse(xhr.responseText)
-					  	       .map( n => new Negociacao(new Date(n.data), n.quantidade, n.valor)));
-				}
-				else {
-					console.log(xhr.responseText);
-					cb('Não foi possível obter as negociações da semana');
-				}
-			}
-		}
+	obterNegociacoesDaSemana() {
+		return this._httpService.get('negociacoes/semana')
+				.then( negociacoes => {
+					return negociacoes.map( n => new Negociacao(new Date(n.data), n.quantidade, n.valor));
+				})
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível obter as negociações da semana");
+				});
+	}
 
-		xhr.send();	
+	obterNegociacoesDaSemanaAnterior() {
+		return this._httpService.get('negociacoes/anterior')
+				.then( negociacoes => {
+					return negociacoes.map( n => new Negociacao(new Date(n.data), n.quantidade, n.valor));
+				})
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível obter as negociações da semana anterior");
+				});
+	}
+
+	obterNegociacoesDaSemanaRetrasada() {
+		return this._httpService.get('negociacoes/retrasada')
+				.then( negociacoes => {
+					return negociacoes.map( n => new Negociacao(new Date(n.data), n.quantidade, n.valor));
+				})
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível obter as negociações da semana retrasada");
+				});
 	}
 }
