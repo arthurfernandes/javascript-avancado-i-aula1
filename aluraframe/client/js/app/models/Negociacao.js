@@ -7,6 +7,10 @@ class Negociacao {
 		Object.freeze(this);
 	}
 
+	isEquals(negociacao) {
+		return JSON.stringify(this) == JSON.stringify(negociacao);
+	}
+
 	get data() {
 		return new Date(this._data.getTime());
 	}

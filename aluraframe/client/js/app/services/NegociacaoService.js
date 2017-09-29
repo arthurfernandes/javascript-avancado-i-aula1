@@ -49,4 +49,49 @@ class NegociacaoService {
 					throw new Error("Não foi possível obter as negociações da semana retrasada");
 				});
 	}
+
+	carrega(negociacao) {
+		return ConnectionFactory.getConnection()
+				.then(connection => new NegociacaoDao(connection))
+				.then(dao => {
+					dao.adiciona(negociacao)
+					return "Negociação incluida com sucesso";
+				})
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível incluir a negociação");
+				});
+	}
+
+	lista() {
+		return ConnectionFactory.getConnection()
+				.then( connection => new NegociacaoDao(connection))
+				.then( dao => dao.listaTodos())
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível resgatar as negociações do banco");
+				});
+	}
+
+	importa(negociacoesExistentes) {
+		return this.obterNegociacoes()
+				.then( negociacoes => negociacoes.filter( negociacao => 
+					!negociacoesExistentes.some(negociacaoExistente =>  
+					negociacao.isEquals(negociacaoExistente))))
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível importar as negociações");
+				});
+	}
+
+	apaga() {
+		return ConnectionFactory.getConnection()
+				.then(connection => new NegociacaoDao(connection))
+				.then(dao => dao.apagaTodos())
+				.then( () => "Negociações apagadas com sucesso")
+				.catch( erro => {
+					console.log(erro);
+					throw new Error("Não foi possível apagar as Negociações");
+				})
+	}
 }
