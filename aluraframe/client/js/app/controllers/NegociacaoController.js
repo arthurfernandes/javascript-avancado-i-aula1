@@ -14,18 +14,36 @@ class NegociacaoController {
 				'adiciona', 'esvazia', 'ordena', 'inverteOrdem');
 
 		this._ordemAtual = '';
+
+		ConnectionFactory.getConnection()
+			.then( connection => new NegociacaoDao(connection))
+			.then( dao => dao.listaTodos())
+			.then( negociacoes => {
+				negociacoes.forEach( negociacao => this._listaNegociacoes.adiciona(negociacao));
+				this._mensagem.texto = "Negociações resgatadas do banco com sucesso";
+			})
+			.catch( erro => {
+				console.log(erro);	
+				this._mensagem.texto = "Não foi possível obter as negociações do banco"}
+			);
 	}
 
 	adiciona(event){
 		event.preventDefault();
-		try {
-			this._listaNegociacoes.adiciona(this._criarNegociacao());
-			this._mensagem.texto = "Negociação criada com sucesso!";
-			this._limparFormulario();
-		}
-		catch(erro){
-			this._mensagem.texto = erro;
-		}
+		
+		ConnectionFactory.getConnection()
+			.then(connection => new NegociacaoDao(connection))
+			.then(dao => {
+				let negociacao = this._criarNegociacao()
+				dao.adiciona(negociacao)
+				return negociacao;
+			})
+			.then( negociacao => {
+				this._listaNegociacoes.adiciona(negociacao);
+				this._mensagem.texto = "Negociação criada com sucesso!";
+				this._limparFormulario();
+			})
+			.catch( erro => this._mensagem.texto = "Não foi possível incluir a negociação");
 	}
 
 	importaNegociacoes() {
@@ -41,8 +59,17 @@ class NegociacaoController {
 	}
 
 	apaga() {
-		this._listaNegociacoes.esvazia();
-		this._mensagem.texto = "Negociações apagadas com sucesso";
+		ConnectionFactory.getConnection()
+			.then(connection => new NegociacaoDao(connection))
+			.then(dao => dao.apagaTodos())
+			.then( () => {
+				this._listaNegociacoes.esvazia();
+				this._mensagem.texto = "Negociações apagadas com sucesso";
+			})
+			.catch( erro => {
+				console.log(erro);
+				this._mensagem.texto = "Não foi possível apagar as Negociações";
+			})
 	}
 
 	ordena(coluna) {
@@ -60,8 +87,8 @@ class NegociacaoController {
 
 		return new Negociacao(
 			data,
-			this.inputQuantidade.value,
-			this.inputValor.value
+			parseInt(this.inputQuantidade.value),
+			parseFloat(this.inputValor.value)
 		);
 	}
 

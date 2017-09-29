@@ -2,7 +2,7 @@ var ConnectionFactory = (function() {
 
     const dbName = 'aluraframe';
     const stores = ['negociacoes'];
-    let version = 4;
+    let version = 5;
     let connection = null;
     let close = null;
 
@@ -31,7 +31,8 @@ var ConnectionFactory = (function() {
                 }
     
                 openRequest.onerror = e => {
-                    reject(e.target.error);
+                    console.log(e.target.error);
+                    reject("Não foi possível se conectar ao Banco de Dados");
                 }
             });
         }
@@ -47,7 +48,7 @@ var ConnectionFactory = (function() {
             stores.forEach( store => {
                 if (connection.objectStoreNames.contains(store)) connection.deleteObjectStore(store);
     
-                connection.createObjectStore(store);
+                connection.createObjectStore(store, {autoIncrement: true});
             });
         }
     }
