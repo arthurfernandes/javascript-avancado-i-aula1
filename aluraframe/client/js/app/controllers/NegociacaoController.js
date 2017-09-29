@@ -65,6 +65,7 @@ var NegociacaoController = function () {
 			this._service.carrega(negociacao).then(function (mensagem) {
 				_this2._listaNegociacoes.adiciona(negociacao);
 				_this2._mensagem.texto = mensagem;
+				_this2._;
 				_this2._limparFormulario();
 			}).catch(function (erro) {
 				return _this2._mensagem.texto = erro;
@@ -128,3 +129,4 @@ var NegociacaoController = function () {
 
 	return NegociacaoController;
 }();
+//# sourceMappingURL=NegociacaoController.js.map

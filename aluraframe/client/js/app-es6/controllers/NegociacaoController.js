@@ -53,6 +53,7 @@ class NegociacaoController {
 			.then( mensagem => {
 				this._listaNegociacoes.adiciona(negociacao);
 				this._mensagem.texto = mensagem;
+				this._
 				this._limparFormulario();
 			})
 			.catch( erro => this._mensagem.texto = erro);
